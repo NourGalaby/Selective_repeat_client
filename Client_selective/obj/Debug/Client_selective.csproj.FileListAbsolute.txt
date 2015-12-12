@@ -1,0 +1,7 @@
+c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_selective\bin\Debug\Client_selective.exe
+c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_selective\bin\Debug\Client_selective.pdb
+c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_selective\bin\Debug\mymessage.dll
+c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_selective\bin\Debug\mymessage.pdb
+c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_selective\obj\Debug\Client_selective.exe
+c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_selective\obj\Debug\Client_selective.pdb
+c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_selective\obj\Debug\Client_selective.csprojResolveAssemblyReference.cache
