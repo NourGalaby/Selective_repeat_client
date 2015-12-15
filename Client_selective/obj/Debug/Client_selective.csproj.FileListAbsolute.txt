@@ -5,3 +5,10 @@ c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_sele
 c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_selective\obj\Debug\Client_selective.exe
 c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_selective\obj\Debug\Client_selective.pdb
 c:\users\nour\documents\visual studio 2013\Projects\Client_selective\Client_selective\obj\Debug\Client_selective.csprojResolveAssemblyReference.cache
+C:\Users\Nour Galaby\Documents\Visual Studio 2013\Projects\Client_selective\Client_selective\obj\Debug\Client_selective.exe
+C:\Users\Nour Galaby\Documents\Visual Studio 2013\Projects\Client_selective\Client_selective\obj\Debug\Client_selective.pdb
+C:\Users\Nour Galaby\Documents\Visual Studio 2013\Projects\Client_selective\Client_selective\obj\Debug\Client_selective.csprojResolveAssemblyReference.cache
+C:\Users\Nour Galaby\Documents\Visual Studio 2013\Projects\Client_selective\Client_selective\bin\Debug\Client_selective.exe
+C:\Users\Nour Galaby\Documents\Visual Studio 2013\Projects\Client_selective\Client_selective\bin\Debug\mymessage.dll
+C:\Users\Nour Galaby\Documents\Visual Studio 2013\Projects\Client_selective\Client_selective\bin\Debug\mymessage.pdb
+C:\Users\Nour Galaby\Documents\Visual Studio 2013\Projects\Client_selective\Client_selective\bin\Debug\Client_selective.pdb

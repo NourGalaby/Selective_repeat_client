@@ -16,7 +16,8 @@ namespace client
     class Program
     {
 
-        static int plp = 2;
+        public static bool[] status;
+        static int plp = 20 ;
         static int SIZE=5;
         static bool simulateLoss()
         {
@@ -33,7 +34,7 @@ namespace client
         }
 
 
-        static int BUFFER_SIZE = 512;
+        static int BUFFER_SIZE = 691-8;
         static object deserialize(byte[] data)
         {
 
@@ -101,17 +102,20 @@ namespace client
                 bytes = mystream.ToArray();
 
             }
-            //string filename = "SamSmith.mp3";
-         //   string filename = "Test.txt";
-            string filename = "Test.txt";
+           
+          // string filename = "SamSmith.mp3";
+          string filename = "picture.jpg";
+      //  string filename = "Test.txt";
             bytes = Encoding.ASCII.GetBytes(filename);
 
 
-            byte[] data = new byte[1024];
+            byte[] data = new byte[2000];
             int recv;
 
             IPEndPoint endpoint = new IPEndPoint(
-                            IPAddress.Parse("127.0.0.1"), 950);
+                 IPAddress.Parse("127.0.0.1"), 950);
+                    //   IPAddress.Parse("172.16.13.237"), 950); 
+
 
             Socket server = new Socket(AddressFamily.InterNetwork,
                            SocketType.Dgram, ProtocolType.Udp);
@@ -128,10 +132,10 @@ namespace client
             EndPoint Remote = (EndPoint)sender;
 
             //  server.SendTo(data, data.Length, SocketFlags.None, endpoint);
+            server.SendBufferSize = 0;
 
 
-
-            data = new byte[1024];
+        
 
             int Size = 0;
 
@@ -151,27 +155,24 @@ namespace client
             //    Console.WriteLine(Encoding.ASCII.GetString(data, 0, recv));
 
 
+            status = new bool[Size];
+    
+
             //      byte current_seq = 1;
             List<myMessage> messages = new List<myMessage>();
 
-            byte[] ack = new byte[1];
-            ack[0] = 1;
+           // byte[] ack = new byte[1];
+            //ack[0] = 1;
 
             int k = 0;
 
 
             myMessage[] msgWindow = new myMessage[SIZE];
 
-
+           
             for (int i = 0; i < Size; i++)
             {
-
-                //receive data
-                recv = server.ReceiveFrom(data, ref Remote);
-
-                //convert from data to Message object
-                myMessage msg_rec = (myMessage)deserialize(data);
-
+                data = new byte[1024];
                 //////if (msg_rec.seq_no == ack[0])
                 //////{
                 //////    i--;
@@ -186,67 +187,81 @@ namespace client
 
                 //////        //reverse ack , send, then reverse
                 //////        ack[0] = (byte)zero_one(ack[0]);
-                //////        server.SendTo(ack, 1, SocketFlags.None, Remote);
-                //////        Console.WriteLine("Sent ACk  " + ack[0]);
-                //////        ack[0] = (byte)zero_one(ack[0]);
 
-                //////    }
-                //////    else
-                //////    {
-                //////        ack[0] = (byte)zero_one(ack[0]);
-                //////        Console.WriteLine("Loss ");
+                //receive data
+                Console.WriteLine("data size: " + data.Length); 
+                recv = server.ReceiveFrom(data, ref Remote);
 
+              
+          //      Console.WriteLine("Received PACKET WITH SIZE:" + recv);    
+                //convert from data to Message object
+                myMessage msg_rec = (myMessage)deserialize(data);
+          
+                string seq_s= msg_rec.seq_no.ToString()+ "," ;
+                data=Encoding.ASCII.GetBytes(seq_s );
+              
+                if(simulateLoss()){
+                       server.SendTo(data, data.Length, SocketFlags.None, Remote);
+                }
+                else { Console.WriteLine("Loss");
+                }
+               // Thread.Sleep(50);
+                        Console.WriteLine("Sent ACk  " + msg_rec.seq_no );
+                     
+                 // put in a list
+                if(!status[msg_rec.seq_no]){
+                     messages.Add(msg_rec);
+                               status[msg_rec.seq_no]=true;
+                }else{
+                    Console.WriteLine("Duplicate deteceted");
+                    i--;
+                }
+          
 
-                //////        ack[0] = (byte)zero_one(ack[0]);
-                //////    }
+                }
+     
+              
+                   
+       
 
-                //////}
-                if (false) ;
-                else
-                {
-                    // put in a list
-                    Console.WriteLine("Received Packet:"+ msg_rec.seq_no);
-                    messages.Add(msg_rec);
-
-                    //send ACK
-                    if (simulateLoss())
-                    {
-                        // string  ack =zero_one(msg_rec.seq_no).ToString();
-                        ////////server.SendTo(ack, 1, SocketFlags.None, Remote);
-
-                        ////////Console.WriteLine("Sent ACk " + ack[0]);
-                        int x = zero_one(ack[0]);
-                        ack[0] = (byte)x;
-
-
-                    }
-                    else
                     {
                         ////////Console.WriteLine("Loss ");
                         ////////ack[0] = (byte)zero_one(ack[0]);
                     }
 
-                }
-
-
-
-
-
-
-            }
-
-            //here all data is done receving so 
+                
+                        //here all data is done receving so 
             //we want to covert from data to file
             // so  use the function you made to convert it to files
-         
-          messages.OrderBy(s => s.seq_no);
+
+
+                    foreach (bool ss in status)
+                    {
+                        if (!ss)
+                            Console.WriteLine("PACKET NOT ARRIVED");
+                    }
+
+                    messages.OrderBy(s => s.seq_no);
+                    messages.OrderBy(s => s.seq_no);
+                    messages.OrderBy(s => s.seq_no);
+                    messages.OrderBy(s => s.seq_no);
+                    foreach (myMessage ss in messages)
+                    {
+                        Console.Write(ss.seq_no + " - ");
+                    }
+
             bytestofile(messages, filename);
 
+            Console.WriteLine("after sorting Data");
 
             Console.WriteLine("Stopping client");
             Console.ReadLine();
+
+            }
+
+
+
         }
 
     }
 
-}
