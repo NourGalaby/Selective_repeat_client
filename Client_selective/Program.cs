@@ -137,12 +137,12 @@ namespace client
 
         
 
-            int Size = 0;
+            int pck_count = 0;
 
             try
             {
                 recv = server.ReceiveFrom(data, ref Remote);
-                Size = int.Parse(Encoding.ASCII.GetString(data));
+                pck_count = int.Parse(Encoding.ASCII.GetString(data));
             }
             catch (Exception e)
             {
@@ -155,7 +155,7 @@ namespace client
             //    Console.WriteLine(Encoding.ASCII.GetString(data, 0, recv));
 
 
-            status = new bool[Size];
+            status = new bool[pck_count];
     
 
             //      byte current_seq = 1;
@@ -170,9 +170,27 @@ namespace client
             myMessage[] msgWindow = new myMessage[SIZE];
 
            
-            for (int i = 0; i < Size; i++)
+          //  for (int i = 0; i < Size; i++)
+            while(true)
             {
-                data = new byte[1024];
+                int n = 0;
+                for ( n = 0; n < SIZE; n++) //check if last window arrived, then break
+                {
+                    if (!status[pck_count-n-1])
+                    {
+                        n--;
+                        break;
+                      
+                    }
+
+                }
+
+
+                //stop receving if all last windows arrived 
+                if (n >= SIZE) { 
+                    break; 
+                }
+                    data = new byte[1024];
                 //////if (msg_rec.seq_no == ack[0])
                 //////{
                 //////    i--;
@@ -189,7 +207,7 @@ namespace client
                 //////        ack[0] = (byte)zero_one(ack[0]);
 
                 //receive data
-                Console.WriteLine("data size: " + data.Length); 
+               // Console.WriteLine("data size: " + data.Length); 
                 recv = server.ReceiveFrom(data, ref Remote);
 
               
@@ -203,7 +221,8 @@ namespace client
                 if(simulateLoss()){
                        server.SendTo(data, data.Length, SocketFlags.None, Remote);
                 }
-                else { Console.WriteLine("Loss");
+                else { 
+                    Console.WriteLine("Loss");
                 }
                // Thread.Sleep(50);
                         Console.WriteLine("Sent ACk  " + msg_rec.seq_no );
@@ -214,7 +233,7 @@ namespace client
                                status[msg_rec.seq_no]=true;
                 }else{
                     Console.WriteLine("Duplicate deteceted");
-                    i--;
+                 
                 }
           
 
@@ -241,10 +260,9 @@ namespace client
                             Console.WriteLine("PACKET NOT ARRIVED");
                     }
 
-                    messages.OrderBy(s => s.seq_no);
-                    messages.OrderBy(s => s.seq_no);
-                    messages.OrderBy(s => s.seq_no);
-                    messages.OrderBy(s => s.seq_no);
+                //    messages.OrderBy(s => s.seq_no);
+          
+                    messages.Sort((y, x) => y.seq_no - x.seq_no);
                     foreach (myMessage ss in messages)
                     {
                         Console.Write(ss.seq_no + " - ");
