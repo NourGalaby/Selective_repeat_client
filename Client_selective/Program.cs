@@ -10,11 +10,15 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 namespace client
 {
 
     class Program
     {
+      public static   Button[] buttons;
+          public static  Form abc;
+          static Panel panel;
 
         public static bool[] status;
         static int plp = 20 ;
@@ -84,9 +88,50 @@ namespace client
             }
         }
 
+
+
+    static    void init_gui(int SIZE){
+
+        abc = new Form();
+                     buttons = new Button[SIZE];
+               for(int i=0;i<SIZE;i++){
+                   Button b = new Button();
+
+                   b.Location = new System.Drawing.Point(((i * 15) % SIZE), (int) ((i * 15)/ SIZE*15));
+                   b.Name = "";
+                   b.Size = new System.Drawing.Size(15, 15);
+                   b.TabIndex = 0;
+                   b.Text = "";
+                   b.UseVisualStyleBackColor = true;
+                   b.BackColor = System.Drawing.Color.Red;
+
+                   buttons[i] = b;
+               }
+              
+       panel= new Panel();
+
+  
+       panel.Location = new System.Drawing.Point(12, 7);
+       panel.Name = "panel1";
+       panel.Size = new System.Drawing.Size(900, 900);
+       panel.TabIndex = 0;
+
+
+               panel.Controls.AddRange(buttons);
+               abc.Controls.Add(panel);
+
+               abc.Size = new System.Drawing.Size(900, 900);
+
+
+               Application.EnableVisualStyles();
+               Application.Run(abc); // or whatever
+             
+        }
+        
+        
         static void Main(string[] args)
         {
-      
+
 
             byte[] bytes = null;
 
@@ -103,9 +148,9 @@ namespace client
 
             }
            
-          // string filename = "SamSmith.mp3";
-          string filename = "picture.jpg";
-      //  string filename = "Test.txt";
+      //  string filename = "SamSmith.mp3";
+   string filename = "picture.jpg";
+   //  string filename = "Test.txt";
             bytes = Encoding.ASCII.GetBytes(filename);
 
 
@@ -137,7 +182,7 @@ namespace client
 
         
 
-            int pck_count = 0;
+            int pck_count = 12000;
 
             try
             {
@@ -155,9 +200,22 @@ namespace client
             //    Console.WriteLine(Encoding.ASCII.GetString(data, 0, recv));
 
 
-            status = new bool[pck_count];
-    
 
+            Thread gui;
+
+            gui = new Thread(
+
+                 () => init_gui(pck_count));
+
+      
+
+
+        gui.Start();
+
+            status = new bool[pck_count];
+
+
+            Thread.Sleep(20);
             //      byte current_seq = 1;
             List<myMessage> messages = new List<myMessage>();
 
@@ -176,13 +234,16 @@ namespace client
                 int n = 0;
                 for ( n = 0; n < SIZE; n++) //check if last window arrived, then break
                 {
-                    if (!status[pck_count-n-1])
+                    try
                     {
-                        n--;
-                        break;
-                      
-                    }
+                        if (!status[pck_count - n - 1])
+                        {
+                            n--;
+                            break;
 
+                        }
+                    }
+                    catch { }
                 }
 
 
@@ -224,11 +285,17 @@ namespace client
                 else { 
                     Console.WriteLine("Loss");
                 }
-               // Thread.Sleep(50);
+              Thread.Sleep(10);
                         Console.WriteLine("Sent ACk  " + msg_rec.seq_no );
                      
                  // put in a list
                 if(!status[msg_rec.seq_no]){
+                    try
+                    {
+                        buttons[msg_rec.seq_no].BackColor = System.Drawing.Color.Green;
+                    }
+                    catch { }
+                  //  abc.Update();
                      messages.Add(msg_rec);
                                status[msg_rec.seq_no]=true;
                 }else{
